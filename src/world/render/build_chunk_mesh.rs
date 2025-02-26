@@ -11,11 +11,9 @@ pub fn build_chunk_meshes(
     chunks: impl IntoIterator<Item = (ChunkPos, ChunkModel)>,
     atlas: Option<Texture2D>,
 ) -> impl Iterator<Item = Mesh> {
-    
     let mut meshes = Meshes::new(atlas);
 
     for (chunk_pos, chunk_model) in chunks {
-
         if chunk_model.is_empty() {
             return meshes.into_iter();
         }
@@ -26,74 +24,48 @@ pub fn build_chunk_meshes(
             for x in 0..CHUNK_SIZE_16 {
                 for z in 0..CHUNK_SIZE_16 {
                     let block_model: &BlockModel = chunk_model.get(x, y, z);
-
                     let block_pos = BlockPos {
                         x: x as isize + world_pos.x,
                         y: y as isize + world_pos.y,
                         z: z as isize + world_pos.z,
                     };
-
-                    use BlockModel::*;
-
-                    match *block_model {
-                        Empty | NonCube => {}
-
-                        Top(texture) => meshes.extend_with(block_pos, texture, &[top_vert]),
-                        Bottom(texture) => meshes.extend_with(block_pos, texture, &[bottom_vert]),
-                        Px(texture) => meshes.extend_with(block_pos, texture, &[px_vert]),
-                        Nx(texture) => meshes.extend_with(block_pos, texture, &[nx_vert]),
-                        Pz(texture) => meshes.extend_with(block_pos, texture, &[pz_vert]),
-                        Nz(texture) => meshes.extend_with(block_pos, texture, &[nz_vert]),
-
-                        TopPx(texture) => meshes.extend_with(block_pos, texture, &[top_vert, px_vert]),
-                        TopNx(texture) => meshes.extend_with(block_pos, texture, &[top_vert, nx_vert]),
-                        TopPz(texture) => meshes.extend_with(block_pos, texture, &[top_vert, pz_vert]),
-                        TopNz(texture) => meshes.extend_with(block_pos, texture, &[top_vert, nz_vert]),
-
-                        BottomPx(texture) => meshes.extend_with(block_pos, texture, &[bottom_vert, px_vert]),
-                        BottomNx(texture) => meshes.extend_with(block_pos, texture, &[bottom_vert, nx_vert]),
-                        BottomPz(texture) => meshes.extend_with(block_pos, texture, &[bottom_vert, pz_vert]),
-                        BottomNz(texture) => meshes.extend_with(block_pos, texture, &[bottom_vert, nz_vert]),
-
-                        PxPz(texture) => meshes.extend_with(block_pos, texture, &[px_vert, pz_vert]),
-                        PxNz(texture) => meshes.extend_with(block_pos, texture, &[px_vert, nz_vert]),
-                        NxPz(texture) => meshes.extend_with(block_pos, texture, &[nx_vert, pz_vert]),
-                        NxNz(texture) => meshes.extend_with(block_pos, texture, &[nx_vert, nz_vert]),
-
-                        TopPxDouble(_, _) => todo!(),
-                        TopNxDouble(_, _) => todo!(),
-                        TopPzDouble(_, _) => todo!(),
-                        TopNzDouble(_, _) => todo!(),
-                        BottomPxDouble(_, _) => todo!(),
-                        BottomNxDouble(_, _) => todo!(),
-                        BottomPzDouble(_, _) => todo!(),
-                        BottomNzDouble(_, _) => todo!(),
-
-                        TopPxPz(texture) => meshes.extend_with(block_pos, texture, &[top_vert, px_vert, pz_vert]),
-                        TopNxPz(texture) => meshes.extend_with(block_pos, texture, &[top_vert, nx_vert, pz_vert]),
-                        TopPxNz(texture) => meshes.extend_with(block_pos, texture, &[top_vert, px_vert, nz_vert]),
-                        TopNxNz(texture) => meshes.extend_with(block_pos, texture, &[top_vert, nx_vert, nz_vert]),
-
-                        BottomPxPz(texture) => meshes.extend_with(block_pos, texture, &[bottom_vert, px_vert, pz_vert]),
-                        BottomNxPz(texture) => meshes.extend_with(block_pos, texture, &[bottom_vert, nx_vert, pz_vert]),
-                        BottomPxNz(texture) => meshes.extend_with(block_pos, texture, &[bottom_vert, px_vert, nz_vert]),
-                        BottomNxNz(texture) => meshes.extend_with(block_pos, texture, &[bottom_vert, nx_vert, nz_vert]),
-
-                        TopPxPzDouble(_, _) => todo!(),
-                        TopPxNzDouble(_, _) => todo!(),
-                        TopNxPzDouble(_, _) => todo!(),
-                        TopNxNzDouble(_, _) => todo!(),
-
-                        BottomPxPzDouble(_, _) => todo!(),
-                        BottomPxNzDouble(_, _) => todo!(),
-                        BottomNxPzDouble(_, _) => todo!(),
-                        BottomNxNzDouble(_, _) => todo!(),
-                    };
+                    process_block_model(block_model, block_pos, &mut meshes);
                 }
             }
         }
-    };
+    }
     meshes.into_iter()
+}
+
+fn process_block_model(block_model: &BlockModel, block_pos: BlockPos, meshes: &mut Meshes) {
+    use BlockModel::*;
+
+    let mut add_faces = |texture, faces: &[fn(BlockPos, UvTexture) -> [Vertex; 4]]| {
+        meshes.extend_with(block_pos, texture, faces);
+    };
+
+    match *block_model {
+        Empty | NonCube => {}
+        Top(texture) => add_faces(texture, &[top_vert]),
+        Bottom(texture) => add_faces(texture, &[bottom_vert]),
+        Px(texture) => add_faces(texture, &[px_vert]),
+        Nx(texture) => add_faces(texture, &[nx_vert]),
+        Pz(texture) => add_faces(texture, &[pz_vert]),
+        Nz(texture) => add_faces(texture, &[nz_vert]),
+        TopPx(texture) => add_faces(texture, &[top_vert, px_vert]),
+        TopNx(texture) => add_faces(texture, &[top_vert, nx_vert]),
+        TopPz(texture) => add_faces(texture, &[top_vert, pz_vert]),
+        TopNz(texture) => add_faces(texture, &[top_vert, nz_vert]),
+        BottomPx(texture) => add_faces(texture, &[bottom_vert, px_vert]),
+        BottomNx(texture) => add_faces(texture, &[bottom_vert, nx_vert]),
+        BottomPz(texture) => add_faces(texture, &[bottom_vert, pz_vert]),
+        BottomNz(texture) => add_faces(texture, &[bottom_vert, nz_vert]),
+        PxPz(texture) => add_faces(texture, &[px_vert, pz_vert]),
+        PxNz(texture) => add_faces(texture, &[px_vert, nz_vert]),
+        NxPz(texture) => add_faces(texture, &[nx_vert, pz_vert]),
+        NxNz(texture) => add_faces(texture, &[nx_vert, nz_vert]),
+        _ => {}, // Other cases (e.g., double-sided textures) can be handled here later.
+    }
 }
 
 #[rustfmt::skip]

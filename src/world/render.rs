@@ -10,7 +10,6 @@ mod build_chunk_mesh;
 pub use build_chunk_mesh::build_chunk_meshes;
 
 mod build_chunk_model;
-pub use build_chunk_model::build_chunk_model;
 
 #[derive(Default, Clone, PartialEq)]
 pub struct ChunkModel(Option<[ModelLayer; CHUNK_SIZE_16]>);

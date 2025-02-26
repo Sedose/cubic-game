@@ -1,5 +1,3 @@
-#![feature(const_fn_floating_point_arithmetic)]
-
 use macroquad::prelude::*;
 
 mod grab;
@@ -10,7 +8,6 @@ use player::*;
 
 mod world;
 use world::render::*;
-use world::*;
 
 #[rustfmt::skip]
 const SKY_COLOR: Color = Color { r: 0.3, g: 0.3, b: 0.5, a: 1.0 };

@@ -1,6 +1,4 @@
-use std::{array::from_fn as arr_fn, ops::{Deref, DerefMut}};
-
-use derive_more::{Deref, DerefMut};
+use std::{array::from_fn as arr_fn};
 
 pub mod render;
 

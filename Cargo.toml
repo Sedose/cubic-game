@@ -4,7 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-derive_more = "0.99.18"
+derive_more = { version = "2.0.1", features = ["deref", "deref_mut", "from", "display"] }
 macroquad = "0.4.11"
-rand = "0.8.5"
-worldgen = "0.5.3"
