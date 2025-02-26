@@ -57,7 +57,7 @@ impl Meshes {
         for (i, meshes_ind) in ind.enumerate() {
             meshes.push(Mesh { 
                 vertices: Vec::from(vert.next().unwrap()), 
-                indices: Vec::from_iter(meshes_ind.iter().map(|ind| ind - (i * N_IND_IN_FULL_MESH) as u16)), 
+                indices: Vec::from_iter(meshes_ind.iter().map(|ind| ind.saturating_sub((i * N_IND_IN_FULL_MESH) as u16))),
                 texture: texture.clone(),
             });
         }
