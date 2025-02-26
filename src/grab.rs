@@ -7,9 +7,6 @@ const DEFAULT_GRABBED: bool = true;
 pub struct Grabbed(pub bool);
 
 impl Grabbed {
-    pub const fn new(grabbed: bool) -> Self {
-        Self(grabbed)
-    }
 
     pub fn switch(&mut self) {
         self.0 = !self.0

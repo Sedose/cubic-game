@@ -60,12 +60,6 @@ pub struct Chunk {
 
 impl Chunk {
     /// (usize, usize, usize) - pos in chunk 0..16
-    pub fn from_fn(mut func: impl FnMut(usize, usize, usize) -> BlockState) -> Chunk {
-        Chunk {
-            biome: Biome::Plains,
-            blocks: arr_fn(|y| ChunkLayer::from_fn(|x, z| func(x, y, z))),
-        }
-    }
 
     pub fn fill(&mut self, state: BlockState) {
         for y in 0..CHUNK_SIZE_16 {

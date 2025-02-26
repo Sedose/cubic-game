@@ -131,10 +131,6 @@ impl Front {
             .normalize(),
         )
     }
-
-    pub fn update(&mut self, yaw: Yaw, pitch: Pitch) {
-        *self = Self::new(yaw, pitch);
-    }
 }
 
 #[derive(Debug, Deref, DerefMut, Clone, Copy)]
@@ -143,10 +139,6 @@ pub struct Right(pub Vec3);
 impl Right {
     pub fn new(front: Front) -> Self {
         Self(front.cross(UP).normalize())
-    }
-
-    pub fn update(&mut self, front: Front) {
-        *self = Self::new(front);
     }
 }
 
@@ -158,9 +150,6 @@ impl Up {
         Self(right.cross(front.0).normalize())
     }
 
-    pub fn update(&mut self, right: Right, front: Front) {
-        *self = Self::new(right, front);
-    }
 }
 
 /// ```
